@@ -1,0 +1,2 @@
+# AdminFinder
+Finding admin path :)
