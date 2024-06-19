@@ -2,6 +2,8 @@ try:
     import requests, fake_useragent, os
     from requests import Timeout, RequestException
     from fake_useragent import UserAgent
+    import time
+    from multiprocessing import Pool
 except ModuleNotFoundError:
     import os
     os.system('pip3 install requests')
@@ -22,18 +24,20 @@ def start_scanning(url, path):
         try:
             response = requests.get(url + admin, headers={"User-Agent": UserAgent().chrome}, timeout=7)
             if response.status_code == 200:
-                print("\n\033[1;32m{}{} - {}".format(url, admin, response.status_code))
+                print("\033[1;32m{}{} - {}".format(url, admin, response.status_code))
             else:
-                print("\n\033[1;91m{}{} - {}".format(url, admin, response.status_code))
+                print("\033[1;91m{}{} - {}".format(url, admin, response.status_code))
         except Timeout:
-            print("\n\033[1;91m Timeout!")
-            break
+            print("\033[1;91m Timeout!")
+            time.sleep(20)
+            continue
         except RequestException:
-            print("\n\033[1;91m An Error Occured!")
-            break
+            print("\033[1;91m An Error Occured!")
+            continue
 if __name__ == '__main__':
     clear()
     print(logo)
     url = input("[+] Insert Url : ")
     file_path = input("[+] Insert Path Admin [.txt] : ")
-    start_scanning(url, file_path)
+    with Pool(20) as mp:
+        mp.map(start_scanning, url, file_path)
