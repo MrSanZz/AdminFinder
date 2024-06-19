@@ -4,6 +4,7 @@ try:
     from fake_useragent import UserAgent
     import time
     from multiprocessing import Pool
+    from concurrent.futures import ThreadPoolExecutor
 except ModuleNotFoundError:
     import os
     os.system('pip3 install requests')
@@ -39,5 +40,11 @@ if __name__ == '__main__':
     print(logo)
     url = input("[+] Insert Url : ")
     file_path = input("[+] Insert Path Admin [.txt] : ")
-    with Pool(20) as mp:
-        mp.map(start_scanning, url, file_path)
+    try:
+        with Pool(20) as mp:
+            mp.map(start_scanning, url, file_path)
+    except TypeError:
+        with ThreadPoolExecutor(max_workers=40) as executor:
+            futures = [executor.submit(start_scanning, url, file_path)]
+    except:
+        start_scanning(url, file_path)
