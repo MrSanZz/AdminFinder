@@ -25,7 +25,10 @@ def start_scanning(url, path):
         try:
             response = requests.get(url + admin, headers={"User-Agent": UserAgent().chrome}, timeout=7)
             if response.status_code == 200:
-                print("\033[1;32m{}{} - {}".format(url, admin, response.status_code))
+                rejected = ['Rejected', 'Error', 'No page found', '404', 'Not found', 'maintenance', 'blocked', 'denied', '403', 'forbidden', 'The requested URL was rejected', 'Missing']
+                for text in rejected:
+                    if all(text not in response.text for text in rejected):
+                        print("\033[1;32m{}{} - {}".format(url, admin, response.status_code))
             else:
                 print("\033[1;91m{}{} - {}".format(url, admin, response.status_code))
         except Timeout:
